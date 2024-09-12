@@ -1,0 +1,49 @@
+.ProjectCardContiner {
+  background-color: rgba(114, 3, 240, 0.089);
+  width: 350px;
+  height: 600px;
+  margin: 20px;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 2px 2px 20px rgba(97, 0, 224, 0.5);
+}
+.ProjectCardContiner h1 {
+  color: rgb(255, 255, 255);
+  font-family: "Courier New", Courier, monospace;
+}
+.ProjectCardContiner h3 a img {
+  width: 30px;
+  height: 30px;
+  margin-left: 20px;
+}
+.ProjectCardContiner h3 {
+  display: flex;
+  align-items: center;
+  /* justify-content: center; */
+}
+.ProjectCardContiner p {
+  color: rgb(255, 255, 255);
+  /* font-family: "Courier New", Courier, monospace; */
+  font-style: italic;
+}
+.ProjectCardContiner img {
+  box-shadow: 3px 3px 10px 1cqh rgba(0, 0, 0, 0.205);
+  width: 100%;
+  /* height: 250px; */
+  border-radius: 15px;
+}
+
+@media (max-width: 872px) {
+  .ProjectCardContiner {
+    background-color: rgba(114, 3, 240, 0.089);
+    width: 95vw;
+    height: fit-content;
+  }
+
+}
+
+
+
+.ProjectCardContiner:hover {
+    background:linear-gradient(rgba(0, 0, 255, 0.322),rgba(0, 255, 42, 0.301));
+  }

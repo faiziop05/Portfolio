@@ -1,0 +1,15 @@
+.ProjectsCardsWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.ProjectsHeading {
+  text-align: center;
+  font-family: "Courier New", Courier, monospace;
+}
+
+@media (max-width: 872px) {
+
+}

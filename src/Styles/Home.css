@@ -1,0 +1,76 @@
+.HomeSCreenConatiner {
+  background-color: #070724;
+  width: 100vw;
+  height: 93vh;
+  /* height: 100%; */
+  
+}
+.HomeBottomWhiteIsland {
+  background-color: #ffffff;
+  width: 100vw;
+  height: 7vh;
+  border-radius: 1000% 1000% 0 0;
+}
+
+.WelcomeContainer {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-around;
+  height: 80vh;
+  margin: 0 15%;
+}
+.WelcomeContainer div {
+  width: 40vw;
+}
+.WelcomeContainer h1 {
+  font-size: 80px;
+  font-family: "Courier New", Courier, monospace;
+}
+.exploreText{
+    color: rgb(255, 174, 0);
+    font-family: "Courier New", Courier, monospace;
+}
+.welocmeDesc{
+    line-height: 24px;
+    font-style: italic;
+}
+.HomeImage {
+  width: 20vw;
+  height: 20vw;
+  border-radius: 50%;
+  background-color: #070724;
+  border-radius: 50%;
+  border: 3px solid;
+  border-color: #ffffff;
+  padding: 2px;
+}
+
+@media (max-width: 872px) {
+  .WelcomeContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+    margin: 0 15%;
+  }
+  .WelcomeContainer div {
+    width: 80vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .WelcomeContainer h1 {
+    font-size: 40px;
+    font-family: "Courier New", Courier, monospace;
+    text-align: center;
+  }
+  .HomeImage {
+    width: 40vw;
+    height: 40vw;
+
+  }
+}

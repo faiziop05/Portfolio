@@ -1,0 +1,29 @@
+.NavBarContinner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+  padding-block: 15px;
+  background-color: rgba(114, 3, 240, 0.089);
+}
+.NavLinks {
+  color: aliceblue;
+  text-decoration: none;
+  margin-inline: 15px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: "Courier New", Courier, monospace;
+  letter-spacing: 1px;
+}
+.NavLinks:hover {
+  background-color: aliceblue;
+  color: #070724;
+  transition: 0.3s ease-in;
+}
