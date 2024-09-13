@@ -46,21 +46,19 @@
     flex-direction: column;
     position: absolute;
     top: 100px;
-    width: 100%;
     left: 0;
-    right: 5;
-    align-items: center;
-    z-index: 10;
     border-radius: 0 0 20px 20px;
-    transition: 0.5s ease-in;
   }
 
   .NavLinksContainer.active {
     display: flex;
     transition: 0.5s ease-in;
     background-color: aliceblue;
-    width: 100%;
-    padding: 10px;
+    width: 100vw;
+    padding: 10px 0;
+    align-self: center;
+    align-items: center;
+    justify-content: center;
   }
   .NavLinks {
     background-color: rgb(4, 5, 70);

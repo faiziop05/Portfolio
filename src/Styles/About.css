@@ -1,0 +1,60 @@
+.about-section {
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .about-section h1 {
+    font-size: 48px;
+    color: #ffffff;
+    font-family: "Courier New", Courier, monospace;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .about-section h2 {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 30px;
+    margin-bottom: 20px;
+  }
+  
+  .about-section p {
+    font-size: 20px;
+    color: #ffffff;
+    background-color: rgba(57, 90, 151, 0.301);
+    line-height: 1.8;
+    padding: 25px;
+    font-style: italic;
+    border-radius: 15px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .about-section p:hover {
+    background-color: rgba(26, 105, 250, 0.301);
+    transform: scale(1.02);
+  }
+  
+  .about-section ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 30px;
+  }
+  
+  .about-section li {
+    background: linear-gradient(to right, #09186e, #8156aa);
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-family: "Courier New", Courier, monospace;
+    color: #ffffff;
+    transition: transform 0.3s ease;
+    font-weight: 600;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .about-section li:hover {
+    transform: translateY(-5px);
+  }
+  
