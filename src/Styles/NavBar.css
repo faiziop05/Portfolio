@@ -9,7 +9,10 @@
   background-color: rgba(114, 3, 240, 0.089);
   transition: 0.5s ease-in;
 }
-
+.NavBarLogo h2{
+  font-family: "Courier New", Courier, monospace;
+  font-size: 25px;
+}
 .NavLinksContainer {
   display: flex;
   gap: 20px;
@@ -30,6 +33,7 @@
   font-family: "Courier New", Courier, monospace;
   letter-spacing: 1px;
   transition: 0.5s ease-in;
+  cursor: pointer;
 }
 .NavLinks:hover {
   background-color: aliceblue;

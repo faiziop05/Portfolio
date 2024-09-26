@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../Styles/NavBar.css";
-import { Link } from "react-router-dom";
-import { FaBars, FaTimes } from "react-icons/fa"; // Import icons for menu
+import { Link as ScrollLink } from 'react-scroll'; // Import react-scroll for smooth scrolling
+import { FaBars, FaTimes } from "react-icons/fa"; 
 
 const NavBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -13,26 +13,50 @@ const NavBar = () => {
   return (
     <nav className="NavBarContainer">
       <div className="NavBarLogo">
-        <h2>My Portfolio</h2>
+        <h2>Faizan Hanif</h2>
       </div>
 
       <div className={`NavLinksContainer ${menuOpen ? "active" : ""}`}>
-        <Link className="NavLinks" to="/" onClick={toggleMenu}>
+        <ScrollLink
+          className="NavLinks"
+          to="homeSection"
+          smooth={true}
+          duration={500}
+          onClick={toggleMenu}
+        >
           <p>HOME</p>
-        </Link>
-        <Link className="NavLinks" to="/Projects" onClick={toggleMenu}>
+        </ScrollLink>
+        <ScrollLink
+          className="NavLinks"
+          to="projectsSection"
+          smooth={true}
+          duration={500}
+          onClick={toggleMenu}
+        >
           <p>PROJECTS</p>
-        </Link>
-        <Link className="NavLinks" to="/About" onClick={toggleMenu}>
+        </ScrollLink>
+        <ScrollLink
+          className="NavLinks"
+          to="aboutSection"
+          smooth={true}
+          duration={500}
+          onClick={toggleMenu}
+        >
           <p>ABOUT</p>
-        </Link>
-        <Link className="NavLinks" to="/Contact" onClick={toggleMenu}>
+        </ScrollLink>
+        <ScrollLink
+          className="NavLinks"
+          to="contactSection"
+          smooth={true}
+          duration={500}
+          onClick={toggleMenu}
+        >
           <p>CONTACT</p>
-        </Link>
+        </ScrollLink>
       </div>
 
       <div className="MenuIcon" onClick={toggleMenu}>
-        {menuOpen ? <FaTimes /> : <FaBars />} {/* Switch between open and close icons */}
+        {menuOpen ? <FaTimes /> : <FaBars />}
       </div>
     </nav>
   );

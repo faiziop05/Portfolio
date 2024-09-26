@@ -1,13 +1,20 @@
 .HomeSCreenConatiner {
   background-color: #070724;
-  width: 100vw;
+  /* width: 100vw; */
   height: 93vh;
   /* height: 100%; */
-  
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+}
+.HomeSCreenConatiner.in-view {
+  transition: opacity 1s ease-out, transform 1s ease-out;
+  opacity: 1;
+  transform: translateY(0);
 }
 .HomeBottomWhiteIsland {
   background-color: #ffffff;
-  width: 100vw;
+  /* width: 100vw; */
   height: 7vh;
   border-radius: 1000% 1000% 0 0;
 }
@@ -27,23 +34,20 @@
   font-size: 80px;
   font-family: "Courier New", Courier, monospace;
 }
-.exploreText{
-    color: rgb(255, 174, 0);
-    font-family: "Courier New", Courier, monospace;
+.exploreText {
+  color: rgb(255, 174, 0);
+  font-family: "Courier New", Courier, monospace;
 }
-.welocmeDesc{
-    line-height: 24px;
-    font-style: italic;
+.welocmeDesc {
+  line-height: 24px;
+  font-style: italic;
 }
 .HomeImage {
   width: 20vw;
   height: 20vw;
   border-radius: 50%;
-  background-color: #070724;
-  border-radius: 50%;
   border: 3px solid;
   border-color: #ffffff;
-  padding: 2px;
 }
 
 @media (max-width: 872px) {
@@ -71,6 +75,5 @@
   .HomeImage {
     width: 40vw;
     height: 40vw;
-
   }
 }

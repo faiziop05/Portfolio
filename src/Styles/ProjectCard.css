@@ -1,5 +1,5 @@
 .ProjectCardContiner {
-  background-color: rgba(114, 3, 240, 0.089);
+  background-color: #070724;
   width: 350px;
   height: 600px;
   margin: 20px;
@@ -35,7 +35,6 @@
 
 @media (max-width: 872px) {
   .ProjectCardContiner {
-    background-color: rgba(114, 3, 240, 0.089);
     width: 95vw;
     height: fit-content;
   }
@@ -45,5 +44,6 @@
 
 
 .ProjectCardContiner:hover {
-    background:linear-gradient(rgba(0, 0, 255, 0.322),rgba(0, 255, 42, 0.301));
+   transition: 0.3s ease-in;
+   transform: scale(1.02);
   }

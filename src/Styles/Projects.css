@@ -1,15 +1,35 @@
+.ProjectsContainer{
+  background-color: #fff;
+  /* width: 100vw; */
+  margin-top: -23px;
+}
+
+.ProjectsBottomWhiteIsland {
+  background-color: #ffffff;
+  /* width: 100vw; */
+  height: 7vh;
+  border-radius:0 0 1000% 1000% ;
+  
+}
 .ProjectsCardsWrapper {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+}
+.ProjectsCardsWrapper.in-view {
+  transition: opacity 1s ease-out, transform 1s ease-out;
+  opacity: 1;
+  transform: translateY(0);
 }
 .ProjectsHeading {
   text-align: center;
+  color: black;
   font-family: "Courier New", Courier, monospace;
 }
 
-@media (max-width: 872px) {
 
-}

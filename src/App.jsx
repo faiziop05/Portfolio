@@ -1,8 +1,11 @@
-import { Home } from "./Screens";
+import { Home ,About,Contact,Projects} from "./Screens";
 function App() {
   return (
     <>
       <Home />
+      <Projects />
+      <About />
+      <Contact />
     </>
   );
 }
