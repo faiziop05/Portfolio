@@ -41,9 +41,9 @@ function Home() {
           <div>
             <h1>Welcome.</h1>
             <p className="welocmeDesc">
-              Hello! I'm Faizan Hanif, a dedicated web and Mobile App Developer
+              Hello! I'm Faizan Hanif, a dedicated MERN Developer
               driven by a passion for crafting innovative digital solutions. My
-              expertise lies in React.js, React Native Expo, and JavaScript, but
+              expertise lies in React.js, React Native Expo, JavaScript, Express.js, MongoDB, and Node.js but
               I'm always eager to explore new technologies. Let's build
               something incredible together!
             </p>
