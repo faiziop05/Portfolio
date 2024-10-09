@@ -47,7 +47,7 @@ const data = [
     GitHubLink: "https://github.com/faiziop05/Video-App-with-pagination-and-caching",
   },
   {
-    CardImage: BlogUi,
+    CardImage: BlogUI,
     CardHeading: "Blog Website",
     CardDetailes:
       "A modern, feature-rich blog website built using React.js and Vite. The website offers content creation, image uploads, and an intuitive text editor to manage posts seamlessly. The project utilizes state management with Redux and integrates Cloudinary for efficient image hosting.",
