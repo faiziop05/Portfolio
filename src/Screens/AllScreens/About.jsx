@@ -51,14 +51,18 @@ const About = () => {
         </div>
         <h1>Skills</h1>
         <ul>
+          <li>HTML & CSS</li>
           <li>JavaScript</li>
           <li>React.js</li>
           <li>React Native</li>
-          <li>HTML & CSS</li>
+          <li>Express</li>
           <li>MongoDB</li>
           <li>SQL</li>
-          <li>Express (Beginner to Intermediate)</li>
+          <li>Firebase</li>
+          <li>Redux</li>
           <li>Communication</li>
+          <li>Problem Solving</li>
+          <li>Teamwork</li>
         </ul>
       </div>
       <div className="AboutBottomWhiteIsland"></div>
