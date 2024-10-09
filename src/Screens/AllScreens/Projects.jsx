@@ -3,7 +3,7 @@ import NavBar from "../../Components/NavBar";
 import ProjectsCard from "../../Components/ProjectsCard";
 import "../../Styles/Projects.css";
 
-import BlogUi from "../../assets/BlogUi.jpg";
+import BlogUI from "../../assets/BlogUI.jpg";
 import CMSUI from "../../assets/CMSUI.gif";
 import TaskAppUI from "../../assets/TaskAppUI.gif";
 import VideosAppUI from "../../assets/VideosAppUI.gif";
