@@ -9,6 +9,7 @@ import TaskAppUI from "../../assets/TaskAppUI.gif";
 import VideosAppUI from "../../assets/VideosAppUI.gif";
 import WeatherUI from "../../assets/WeatherUI.gif";
 import EComUI from "../../assets/EComUI.gif";
+import ChatUI from "../../assets/ChatUI.gif";
 
 const data = [
   {
@@ -52,6 +53,13 @@ const data = [
     CardDetailes:
       "A modern, feature-rich blog website built using React.js and Vite. The website offers content creation, image uploads, and an intuitive text editor to manage posts seamlessly. The project utilizes state management with Redux and integrates Cloudinary for efficient image hosting.",
     GitHubLink: "https://github.com/faiziop05/Blog-Website",
+  },
+  {
+    CardImage: ChatUI,
+    CardHeading: "Chatting Website",
+    CardDetailes:
+      "A modern, real-time chat platform built with React.js and Vite on the frontend, and Express.js, Socket.io, and MongoDB on the backend. The website features seamless real-time messaging, and profile image uploads via Cloudinary.",
+    GitHubLink: "https://github.com/faiziop05/chat-website",
   },
 ];
 const Projects = () => {

@@ -40,11 +40,11 @@ const About = () => {
           <p>
             Hi, I'm Faizan Hanif, a passionate developer with a Bachelor's
             degree in Computer Science. I have over 2 years of experience in
-            technologies like React.js, React Native, HTML, CSS, and JavaScript.
+            technologies like React.js, React Native, HTML, CSS, JavaScript, Express.js, Node.js, and MongoDB.
           </p>
           <p>
             I enjoy building web and mobile applications, and have worked on
-            various projects such as e-commerce apps, weather apps, and a CMS
+            various projects such as Chat Apps, weather apps, Task App, and a CMS
             system for my final year project. I am always eager to learn new
             technologies and work on innovative projects.
           </p>
