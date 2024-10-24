@@ -10,6 +10,7 @@ import VideosAppUI from "../../assets/VideosAppUI.gif";
 import WeatherUI from "../../assets/WeatherUI.gif";
 import EComUI from "../../assets/EComUI.gif";
 import ChatUI from "../../assets/ChatUI.gif";
+import SpecifyItUI from "../../assets/SpecifyItUI.gif";
 
 const data = [
   {
@@ -60,6 +61,13 @@ const data = [
     CardDetailes:
       "A modern, real-time chat platform built with React.js and Vite on the frontend, and Express.js, Socket.io, and MongoDB on the backend. The website features seamless real-time messaging, and profile image uploads via Cloudinary.",
     GitHubLink: "https://github.com/faiziop05/chat-website",
+  },
+  {
+    CardImage: SpecifyItUI,
+    CardHeading: "SpecifyIt",
+    CardDetailes:
+      "SpecifyIt is a mobile application built using React Native and the GSM Arena API to explore the specifications of various mobile phones, smartwatches, and tablets. It offers an intuitive way for users to check specifications, compare devices, and browse through the latest tech gadgets. The app implements pagination for smooth data loading and uses React Navigation for seamless transitions between screens.",
+    GitHubLink: "https://github.com/faiziop05/SpecifyIt",
   },
 ];
 const Projects = () => {
