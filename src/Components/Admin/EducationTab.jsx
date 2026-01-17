@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import {
   collection,
   addDoc,
+  updateDoc,
   getDocs,
   deleteDoc,
   doc,
@@ -10,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { toast } from "react-toastify";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaEdit, FaTimes } from "react-icons/fa";
 
 const EducationTab = () => {
   const [education, setEducation] = useState([]);
@@ -21,6 +22,7 @@ const EducationTab = () => {
     description: "", // Optional
   });
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
     fetchEducation();
@@ -40,19 +42,41 @@ const EducationTab = () => {
     }
   };
 
-  const handleAdd = async (e) => {
+  const handleEdit = (edu) => {
+    setEditingId(edu.id);
+    setNewEdu({
+      degree: edu.degree || "",
+      school: edu.school || "",
+      period: edu.period || "",
+      description: edu.description || "",
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setNewEdu({ degree: "", school: "", period: "", description: "" });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newEdu.degree || !newEdu.school) return;
     try {
-      await addDoc(collection(db, "education"), {
-        ...newEdu,
-        createdAt: Date.now(),
-      });
-      setNewEdu({ degree: "", school: "", period: "", description: "" });
-      toast.success("Education added!");
+      if (editingId) {
+        await updateDoc(doc(db, "education", editingId), newEdu);
+        toast.success("Education updated!");
+      } else {
+        await addDoc(collection(db, "education"), {
+          ...newEdu,
+          createdAt: Date.now(),
+        });
+        toast.success("Education added!");
+      }
+
+      handleCancelEdit();
       fetchEducation();
     } catch (error) {
-      toast.error("Error adding education");
+      toast.error("Error saving education");
     }
   };
 
@@ -71,9 +95,22 @@ const EducationTab = () => {
     <div className="space-y-8">
       {/* Form */}
       <div className="bg-slate-800 p-6 rounded-xl border border-slate-700">
-        <h3 className="text-xl font-bold mb-4">Add Education</h3>
-        <form onSubmit={handleAdd} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-bold">
+            {editingId ? "Edit Education" : "Add Education"}
+          </h3>
+          {editingId && (
+            <button
+              onClick={handleCancelEdit}
+              className="text-sm text-slate-400 hover:text-white flex items-center gap-1"
+            >
+              <FaTimes /> Cancel
+            </button>
+          )}
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               placeholder="Degree (e.g. BS Computer Science)"
               value={newEdu.degree}
@@ -87,7 +124,7 @@ const EducationTab = () => {
               className="p-2 bg-slate-900 border border-slate-700 rounded text-white"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               placeholder="Period (e.g. 2016 - 2020)"
               value={newEdu.period}
@@ -98,9 +135,9 @@ const EducationTab = () => {
 
           <button
             type="submit"
-            className="bg-primary px-6 py-2 rounded font-bold text-white hover:bg-indigo-600 transition"
+            className={`px-6 py-2 rounded font-bold text-white transition ${editingId ? "bg-secondary hover:bg-emerald-600" : "bg-primary hover:bg-indigo-600"}`}
           >
-            Add Education
+            {editingId ? "Update Education" : "Add Education"}
           </button>
         </form>
       </div>
@@ -112,14 +149,25 @@ const EducationTab = () => {
           {education.map((edu) => (
             <div
               key={edu.id}
-              className="bg-slate-900 p-4 rounded border border-slate-700 relative group"
+              className={`bg-slate-900 p-4 rounded border transition relative group ${editingId === edu.id ? "border-primary ring-1 ring-primary" : "border-slate-700"}`}
             >
-              <button
-                onClick={() => handleDelete(edu.id)}
-                className="absolute top-4 right-4 text-slate-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition"
-              >
-                <FaTrash />
-              </button>
+              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition">
+                <button
+                  onClick={() => handleEdit(edu)}
+                  className="text-slate-500 hover:text-white"
+                  title="Edit"
+                >
+                  <FaEdit />
+                </button>
+                <button
+                  onClick={() => handleDelete(edu.id)}
+                  className="text-slate-500 hover:text-red-500"
+                  title="Delete"
+                >
+                  <FaTrash />
+                </button>
+              </div>
+
               <h4 className="font-bold text-lg text-primary">{edu.degree}</h4>
               <p className="text-white font-medium">
                 {edu.school}{" "}

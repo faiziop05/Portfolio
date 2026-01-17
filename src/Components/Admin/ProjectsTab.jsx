@@ -2,13 +2,14 @@ import { useState, useEffect } from "react";
 import {
   collection,
   addDoc,
+  updateDoc,
   getDocs,
   deleteDoc,
   doc,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { toast } from "react-toastify";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaEdit, FaTimes } from "react-icons/fa";
 import { uploadToCloudinary } from "../../utils/cloudinary";
 
 const ProjectsTab = () => {
@@ -26,6 +27,7 @@ const ProjectsTab = () => {
   const [tagInput, setTagInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
     fetchProjects();
@@ -40,6 +42,35 @@ const ProjectsTab = () => {
 
   const handleChange = (e) => {
     setProject({ ...project, [e.target.name]: e.target.value });
+  };
+
+  const handleEdit = (proj) => {
+    setEditingId(proj.id);
+    setProject({
+      title: proj.title || "",
+      description: proj.description || "",
+      longDescription: proj.longDescription || "",
+      imageUrls: proj.imageUrls || (proj.imageUrl ? [proj.imageUrl] : []),
+      tags: proj.tags || [],
+      liveUrl: proj.liveUrl || "",
+      githubUrl: proj.githubUrl || "",
+      date: proj.date || "",
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setProject({
+      title: "",
+      description: "",
+      longDescription: "",
+      imageUrls: [],
+      tags: [],
+      liveUrl: "",
+      githubUrl: "",
+      date: "",
+    });
   };
 
   const handleImageUpload = async (e) => {
@@ -94,30 +125,26 @@ const ProjectsTab = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Ensure backwards compatibility if needed, or just save new structure
       const projectData = {
         ...project,
-        // If no imageUrls but has legacy imageUrl (shouldn't happen with new form), handle it?
-        // We'll just define imageUrls as primary source.
-        imageUrl: project.imageUrls[0] || "", // For simple display backup
-        createdAt: new Date().toISOString(),
+        imageUrl: project.imageUrls[0] || "",
+        updatedAt: new Date().toISOString(),
       };
 
-      await addDoc(collection(db, "projects"), projectData);
-      toast.success("Project added!");
-      setProject({
-        title: "",
-        description: "",
-        longDescription: "",
-        imageUrls: [],
-        tags: [],
-        liveUrl: "",
-        githubUrl: "",
-        date: "",
-      });
+      if (editingId) {
+        await updateDoc(doc(db, "projects", editingId), projectData);
+        toast.success("Project updated!");
+      } else {
+        projectData.createdAt = new Date().toISOString();
+        await addDoc(collection(db, "projects"), projectData);
+        toast.success("Project added!");
+      }
+
+      handleCancelEdit(); // Reset form
       fetchProjects();
     } catch (e) {
-      toast.error("Error adding project.");
+      console.error(e);
+      toast.error("Error saving project.");
     } finally {
       setLoading(false);
     }
@@ -137,7 +164,20 @@ const ProjectsTab = () => {
   return (
     <div className="space-y-8">
       <div className="bg-slate-800 p-6 rounded-xl border border-slate-700">
-        <h3 className="text-xl font-bold mb-4">Add New Project</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-bold">
+            {editingId ? "Edit Project" : "Add New Project"}
+          </h3>
+          {editingId && (
+            <button
+              onClick={handleCancelEdit}
+              className="text-sm text-slate-400 hover:text-white flex items-center gap-1"
+            >
+              <FaTimes /> Cancel Edit
+            </button>
+          )}
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             <input
@@ -234,7 +274,7 @@ const ProjectsTab = () => {
                 </span>
               )}
             </div>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {project.imageUrls?.map((url, idx) => (
                 <div key={idx} className="relative group">
                   <img
@@ -273,9 +313,13 @@ const ProjectsTab = () => {
           <button
             type="submit"
             disabled={loading || uploading}
-            className="w-full bg-primary py-3 rounded font-bold text-white hover:bg-indigo-600 transition"
+            className={`w-full py-3 rounded font-bold text-white transition ${editingId ? "bg-secondary hover:bg-emerald-600" : "bg-primary hover:bg-indigo-600"}`}
           >
-            {loading ? "Adding..." : "Add Project"}
+            {loading
+              ? "Saving..."
+              : editingId
+                ? "Update Project"
+                : "Add Project"}
           </button>
         </form>
       </div>
@@ -286,7 +330,7 @@ const ProjectsTab = () => {
           {projects.map((p) => (
             <div
               key={p.id}
-              className="flex justify-between items-start bg-slate-900 p-4 rounded border border-slate-700"
+              className={`flex justify-between items-start bg-slate-900 p-4 rounded border transition ${editingId === p.id ? "border-primary ring-1 ring-primary" : "border-slate-700"}`}
             >
               <div className="flex gap-4">
                 {(p.imageUrls?.[0] || p.imageUrl) && (
@@ -300,7 +344,7 @@ const ProjectsTab = () => {
                   <p className="text-sm text-slate-400 truncate w-64">
                     {p.description}
                   </p>
-                  <div className="flex gap-1 mt-1">
+                  <div className="flex gap-1 mt-1 flex-wrap">
                     {p.tags?.slice(0, 3).map((t) => (
                       <span
                         key={t}
@@ -312,12 +356,22 @@ const ProjectsTab = () => {
                   </div>
                 </div>
               </div>
-              <button
-                onClick={() => handleDelete(p.id)}
-                className="text-red-400 hover:text-red-300 p-2"
-              >
-                <FaTrash />
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleEdit(p)}
+                  className="text-slate-400 hover:text-white p-2"
+                  title="Edit"
+                >
+                  <FaEdit />
+                </button>
+                <button
+                  onClick={() => handleDelete(p.id)}
+                  className="text-red-400 hover:text-red-300 p-2"
+                  title="Delete"
+                >
+                  <FaTrash />
+                </button>
+              </div>
             </div>
           ))}
         </div>

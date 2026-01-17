@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import {
   collection,
   addDoc,
+  updateDoc,
   getDocs,
   deleteDoc,
   doc,
@@ -10,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { toast } from "react-toastify";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaEdit, FaTimes } from "react-icons/fa";
 
 const ExperienceTab = () => {
   const [experiences, setExperiences] = useState([]);
@@ -21,6 +22,7 @@ const ExperienceTab = () => {
     description: "",
   });
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
     fetchExperiences();
@@ -28,7 +30,7 @@ const ExperienceTab = () => {
 
   const fetchExperiences = async () => {
     try {
-      const q = query(collection(db, "experience"), orderBy("period", "desc")); // Simplified ordering
+      const q = query(collection(db, "experience"), orderBy("period", "desc"));
       const querySnapshot = await getDocs(q);
       setExperiences(
         querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
@@ -40,19 +42,41 @@ const ExperienceTab = () => {
     }
   };
 
-  const handleAdd = async (e) => {
+  const handleEdit = (exp) => {
+    setEditingId(exp.id);
+    setNewExp({
+      role: exp.role || "",
+      company: exp.company || "",
+      period: exp.period || "",
+      description: exp.description || "",
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setNewExp({ role: "", company: "", period: "", description: "" });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newExp.role || !newExp.company) return;
     try {
-      await addDoc(collection(db, "experience"), {
-        ...newExp,
-        createdAt: Date.now(),
-      });
-      setNewExp({ role: "", company: "", period: "", description: "" });
-      toast.success("Experience added!");
+      if (editingId) {
+        await updateDoc(doc(db, "experience", editingId), newExp);
+        toast.success("Experience updated!");
+      } else {
+        await addDoc(collection(db, "experience"), {
+          ...newExp,
+          createdAt: Date.now(),
+        });
+        toast.success("Experience added!");
+      }
+
+      handleCancelEdit();
       fetchExperiences();
     } catch (error) {
-      toast.error("Error adding experience");
+      toast.error("Error saving experience");
     }
   };
 
@@ -71,9 +95,21 @@ const ExperienceTab = () => {
     <div className="space-y-8">
       {/* Form */}
       <div className="bg-slate-800 p-6 rounded-xl border border-slate-700">
-        <h3 className="text-xl font-bold mb-4">Add Experience</h3>
-        <form onSubmit={handleAdd} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-bold">
+            {editingId ? "Edit Experience" : "Add Experience"}
+          </h3>
+          {editingId && (
+            <button
+              onClick={handleCancelEdit}
+              className="text-sm text-slate-400 hover:text-white flex items-center gap-1"
+            >
+              <FaTimes /> Cancel
+            </button>
+          )}
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               placeholder="Role (e.g. Senior Dev)"
               value={newExp.role}
@@ -89,7 +125,7 @@ const ExperienceTab = () => {
               className="p-2 bg-slate-900 border border-slate-700 rounded text-white"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               placeholder="Period (e.g. 2020 - Present)"
               value={newExp.period}
@@ -109,9 +145,9 @@ const ExperienceTab = () => {
 
           <button
             type="submit"
-            className="bg-primary px-6 py-2 rounded font-bold text-white hover:bg-indigo-600 transition"
+            className={`px-6 py-2 rounded font-bold text-white transition ${editingId ? "bg-secondary hover:bg-emerald-600" : "bg-primary hover:bg-indigo-600"}`}
           >
-            Add Position
+            {editingId ? "Update Position" : "Add Position"}
           </button>
         </form>
       </div>
@@ -123,14 +159,25 @@ const ExperienceTab = () => {
           {experiences.map((exp) => (
             <div
               key={exp.id}
-              className="bg-slate-900 p-4 rounded border border-slate-700 relative group"
+              className={`bg-slate-900 p-4 rounded border transition relative group ${editingId === exp.id ? "border-primary ring-1 ring-primary" : "border-slate-700"}`}
             >
-              <button
-                onClick={() => handleDelete(exp.id)}
-                className="absolute top-4 right-4 text-slate-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition"
-              >
-                <FaTrash />
-              </button>
+              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition">
+                <button
+                  onClick={() => handleEdit(exp)}
+                  className="text-slate-500 hover:text-white"
+                  title="Edit"
+                >
+                  <FaEdit />
+                </button>
+                <button
+                  onClick={() => handleDelete(exp.id)}
+                  className="text-slate-500 hover:text-red-500"
+                  title="Delete"
+                >
+                  <FaTrash />
+                </button>
+              </div>
+
               <h4 className="font-bold text-lg text-primary">{exp.role}</h4>
               <p className="text-white font-medium">
                 {exp.company}{" "}
