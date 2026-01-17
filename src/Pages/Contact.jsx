@@ -15,7 +15,7 @@ const Contact = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Ideally integrate with Formspree or EmailJS here
-    window.location.href = `mailto:your.email@example.com?subject=Contact from ${formData.name}&body=${formData.message}`;
+    window.location.href = `mailto:faizanhanif369@gmail.com?subject=Contact from ${formData.name}&body=${formData.message}`;
   };
 
   return (
