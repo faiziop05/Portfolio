@@ -11,16 +11,20 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { toast } from "react-toastify";
-import { FaTrash, FaEdit, FaTimes } from "react-icons/fa";
+import { FaTrash, FaEdit, FaTimes, FaSave } from "react-icons/fa";
+import { usePortfolio } from "../../Context/PortfolioContext";
+
+const emptyEdu = {
+  degree: "",
+  school: "",
+  period: "",
+  focus: "",
+};
 
 const EducationTab = () => {
+  const { refreshData } = usePortfolio();
   const [education, setEducation] = useState([]);
-  const [newEdu, setNewEdu] = useState({
-    degree: "",
-    school: "",
-    period: "",
-    description: "", // Optional
-  });
+  const [edu, setEdu] = useState(emptyEdu);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
 
@@ -33,149 +37,227 @@ const EducationTab = () => {
       const q = query(collection(db, "education"), orderBy("period", "desc"));
       const querySnapshot = await getDocs(q);
       setEducation(
-        querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+        querySnapshot.docs.map((d) => ({ id: d.id, ...d.data() }))
       );
-    } catch (error) {
-      console.error("Error fetching education:", error);
+    } catch {
+      try {
+        const snap = await getDocs(collection(db, "education"));
+        setEducation(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      } catch (err) {
+        console.error("Error fetching education:", err);
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEdit = (edu) => {
-    setEditingId(edu.id);
-    setNewEdu({
-      degree: edu.degree || "",
-      school: edu.school || "",
-      period: edu.period || "",
-      description: edu.description || "",
+  const handleChange = (e) => {
+    setEdu({ ...edu, [e.target.name]: e.target.value });
+  };
+
+  const handleEdit = (item) => {
+    setEditingId(item.id);
+    setEdu({
+      degree: item.degree || "",
+      school: item.school || "",
+      period: item.period || "",
+      focus: item.focus || "",
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleCancelEdit = () => {
     setEditingId(null);
-    setNewEdu({ degree: "", school: "", period: "", description: "" });
+    setEdu(emptyEdu);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!newEdu.degree || !newEdu.school) return;
+    if (!edu.degree || !edu.school) {
+      toast.error("Degree and institution are required.");
+      return;
+    }
+
     try {
       if (editingId) {
-        await updateDoc(doc(db, "education", editingId), newEdu);
-        toast.success("Education updated!");
+        await updateDoc(doc(db, "education", editingId), {
+          ...edu,
+          updatedAt: new Date().toISOString(),
+        });
+        toast.success("Education record updated!");
       } else {
         await addDoc(collection(db, "education"), {
-          ...newEdu,
-          createdAt: Date.now(),
+          ...edu,
+          createdAt: new Date().toISOString(),
         });
-        toast.success("Education added!");
+        toast.success("Education record added!");
       }
 
       handleCancelEdit();
-      fetchEducation();
+      await fetchEducation();
+      if (refreshData) refreshData();
     } catch (error) {
-      toast.error("Error saving education");
+      toast.error("Error saving education: " + error.message);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this?")) return;
+    if (!window.confirm("Delete this education entry?")) return;
     try {
       await deleteDoc(doc(db, "education", id));
-      toast.success("Deleted");
-      fetchEducation();
+      toast.success("Education record removed");
+      await fetchEducation();
+      if (refreshData) refreshData();
     } catch (error) {
-      toast.error("Error deleting");
+      toast.error("Error deleting education: " + error.message);
     }
   };
 
   return (
     <div className="space-y-8">
-      {/* Form */}
-      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold">
-            {editingId ? "Edit Education" : "Add Education"}
-          </h3>
+      {/* Editor Form */}
+      <div className="bg-dark-850/80 p-6 md:p-8 rounded-2xl border border-white/10 backdrop-blur-xl shadow-xl space-y-4">
+        <div className="flex justify-between items-center pb-3 border-b border-white/10">
+          <div>
+            <h3 className="text-xl font-bold text-white">
+              {editingId ? "Edit Education Record" : "Add Education & Degree"}
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Degree credentials, coursework, and technical certifications.
+            </p>
+          </div>
           {editingId && (
             <button
               onClick={handleCancelEdit}
-              className="text-sm text-slate-400 hover:text-white flex items-center gap-1"
+              className="text-xs text-slate-400 hover:text-white flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.05]"
             >
               <FaTimes /> Cancel
             </button>
           )}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              placeholder="Degree (e.g. BS Computer Science)"
-              value={newEdu.degree}
-              onChange={(e) => setNewEdu({ ...newEdu, degree: e.target.value })}
-              className="p-2 bg-slate-900 border border-slate-700 rounded text-white"
-            />
-            <input
-              placeholder="School / University"
-              value={newEdu.school}
-              onChange={(e) => setNewEdu({ ...newEdu, school: e.target.value })}
-              className="p-2 bg-slate-900 border border-slate-700 rounded text-white"
-            />
+            <div>
+              <label className="block text-xs font-mono font-medium text-slate-300 mb-1">
+                Degree / Qualification *
+              </label>
+              <input
+                name="degree"
+                value={edu.degree}
+                onChange={handleChange}
+                required
+                placeholder="e.g. Bachelor of Science in Computer Science"
+                className="w-full px-3.5 py-2 bg-dark-900 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-primary"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono font-medium text-slate-300 mb-1">
+                Institution / University *
+              </label>
+              <input
+                name="school"
+                value={edu.school}
+                onChange={handleChange}
+                required
+                placeholder="e.g. University Faculty of Computing"
+                className="w-full px-3.5 py-2 bg-dark-900 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-primary"
+              />
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              placeholder="Period (e.g. 2016 - 2020)"
-              value={newEdu.period}
-              onChange={(e) => setNewEdu({ ...newEdu, period: e.target.value })}
-              className="p-2 bg-slate-900 border border-slate-700 rounded text-white"
-            />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-mono font-medium text-slate-300 mb-1">
+                Period / Years
+              </label>
+              <input
+                name="period"
+                value={edu.period}
+                onChange={handleChange}
+                placeholder="e.g. 2019 - 2023"
+                className="w-full px-3.5 py-2 bg-dark-900 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-primary"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-xs font-mono font-medium text-slate-300 mb-1">
+                Focus Area / Coursework
+              </label>
+              <input
+                name="focus"
+                value={edu.focus}
+                onChange={handleChange}
+                placeholder="e.g. Data Structures & Algorithms, Distributed Systems, Software Architecture"
+                className="w-full px-3.5 py-2 bg-dark-900 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-primary"
+              />
+            </div>
           </div>
 
           <button
             type="submit"
-            className={`px-6 py-2 rounded font-bold text-white transition ${editingId ? "bg-secondary hover:bg-emerald-600" : "bg-primary hover:bg-indigo-600"}`}
+            className="w-full flex items-center justify-center gap-2 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl text-xs transition-all shadow-md shadow-primary/20"
           >
-            {editingId ? "Update Education" : "Add Education"}
+            <FaSave className="text-xs" />
+            {editingId ? "Update Education" : "Save Education Record"}
           </button>
         </form>
       </div>
 
       {/* List */}
-      <div className="bg-slate-800 p-6 rounded-xl border border-slate-700">
-        <h3 className="text-xl font-bold mb-4">Education History</h3>
-        <div className="space-y-4">
-          {education.map((edu) => (
-            <div
-              key={edu.id}
-              className={`bg-slate-900 p-4 rounded border transition relative group ${editingId === edu.id ? "border-primary ring-1 ring-primary" : "border-slate-700"}`}
-            >
-              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition">
-                <button
-                  onClick={() => handleEdit(edu)}
-                  className="text-slate-500 hover:text-white"
-                  title="Edit"
-                >
-                  <FaEdit />
-                </button>
-                <button
-                  onClick={() => handleDelete(edu.id)}
-                  className="text-slate-500 hover:text-red-500"
-                  title="Delete"
-                >
-                  <FaTrash />
-                </button>
-              </div>
-
-              <h4 className="font-bold text-lg text-primary">{edu.degree}</h4>
-              <p className="text-white font-medium">
-                {edu.school}{" "}
-                <span className="text-slate-400 text-sm">| {edu.period}</span>
-              </p>
-            </div>
-          ))}
+      <div className="bg-dark-850/80 p-6 md:p-8 rounded-2xl border border-white/10 backdrop-blur-xl shadow-xl space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-white/10">
+          <h3 className="text-lg font-bold text-white">
+            Education Credentials ({education.length})
+          </h3>
+          <span className="text-xs font-mono text-slate-400">Live in Firestore</span>
         </div>
+
+        {loading ? (
+          <p className="text-xs text-slate-400 py-4">Loading education...</p>
+        ) : education.length === 0 ? (
+          <p className="text-xs text-slate-500 py-4 text-center">
+            No education records in Firestore. Use the form above or click &quot;Sync Starter Data&quot; to populate.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {education.map((item) => (
+              <div
+                key={item.id}
+                className={`p-4 rounded-xl border flex justify-between items-start transition-all ${
+                  editingId === item.id
+                    ? "bg-primary/10 border-primary"
+                    : "bg-dark-900/80 border-white/5 hover:border-white/20"
+                }`}
+              >
+                <div>
+                  <h4 className="font-bold text-sm text-white">{item.degree}</h4>
+                  <div className="text-xs text-primary-light mt-0.5">{item.school}</div>
+                  <div className="text-[11px] font-mono text-slate-400 mt-1">{item.period}</div>
+                  {item.focus && (
+                    <p className="text-xs text-slate-400 mt-1 line-clamp-2">{item.focus}</p>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => handleEdit(item)}
+                    className="p-1.5 text-slate-400 hover:text-white rounded"
+                  >
+                    <FaEdit />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="p-1.5 text-rose-400 hover:text-white rounded"
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

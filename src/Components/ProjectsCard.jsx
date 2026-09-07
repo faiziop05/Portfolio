@@ -1,4 +1,3 @@
-import React from "react";
 import "../Styles/ProjectCard.css";
 import gitHubIcon from "../assets/github-mark-white.png";
 const ProjectsCard = ({cardImg,headiing,details,link}) => {
